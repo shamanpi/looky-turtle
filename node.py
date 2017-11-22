@@ -11,20 +11,23 @@ bridge = CvBridge()
 # callback function is called whenever the subscriber detects new data within the camera
 # topic, takes the topic's data as input, and uses that for whatever purpose we define.
 def callback(data):
+    frame = data.header.seq
+    vel = 1.0 * frame / 1000.0
     try:
 	cv_image = bridge.imgmsg_to_cv2(data, "bgr8")
     except CvBridgeError as e:
 	print(e)
     (rows, cols, channels) = cv_image.shape
+    p.publish(Twist(Vector3(0,0,0), Vector3(vel, vel, vel)))
+    print ("Current frame number is: %d" % frame, "Am publishing velocity: (%d, %d, %d) (%d, %d, %d)" % (0, 0, 0, vel, vel, vel))
 
 if __name__ == '__main__':
-  rospy.Subscriber('camera/rgb/image_raw', Image, callback)
   rospy.init_node('translator', anonymous=False)
+  rospy.Subscriber('camera/rgb/image_raw', Image, callback)
   rate = rospy.Rate(10)
   while not rospy.is_shutdown():
     str = rospy.get_time()
     img = rospy
-    p.publish(Twist(Vector3(frame/1000,frame/1000,frame/1000), Vector3(0,0,0)))
 #    rospy.loginfo("%s" % str)
     rate.sleep()
 
