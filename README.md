@@ -30,6 +30,12 @@ These are but a few of the possible applications of this technology.  It is this
 
 Obviously, if such a useful technology were easy to concoct, it would already be in common use in many fields.  But this is not the case, and we have had the opportunity to learn first hand about some of the challenges involved in creating an autonomous tracking-drone.  Herein, we discuss the hurdles we faced in this project for this class.  These hiccups are smaller versions of those a team of developers would likely face in a real-world application, as our project is a limited implementation with many simplifying assumptions built in.
 
-#### Machine Vision
+###  Machine Vision
 
-#### Physical Robot Control
+#### -Environment Setup
+
+#### -Algorithm Choice
+
+#### -Hardware Considerations
+
+### Physical Robot Control
