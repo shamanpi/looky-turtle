@@ -1,0 +1,8 @@
+prefix=/home/kentbot/catkin_ws/devel
+
+Name: obj_tracker
+Description: Description of obj_tracker
+Version: 0.0.0
+Cflags: -I/home/kentbot/catkin_ws/devel/include
+Libs: -L/home/kentbot/catkin_ws/devel/lib 
+Requires: rospy std_msgs message_runtime
