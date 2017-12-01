@@ -1,3 +1,13 @@
+# Things to do:
+
+- Moving the machine (with negative feedback loop on center of the target box)
+- Searching for object until found
+- Running average and dead zone ideas for noise reduction
+- Presentation work
+- Double-check functionality on Gazebo
+- Get access to Turtlebots in the lab
+- Publish center coordinates and area of box
+
 # Looky-Turtle (Object Detection/Tracking Turtlebot)
 
 ## Introduction
