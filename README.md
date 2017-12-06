@@ -1,12 +1,8 @@
 # Things to do:
-
-- Moving the machine (with negative feedback loop on center of the target box)
-- Searching for object until found
-- Running average and dead zone ideas for noise reduction
-- Presentation work
-- Double-check functionality on Gazebo
-- Get access to Turtlebots in the lab
-- Publish center coordinates and area of box
+- Adjust the velocity smoothing for greater effect
+- Figure out how to connect to and use the Kinect
+- Train a more versatile classifier (occlusions, different orientations, angles, etc.)
+- Have non-target add on 0's instead of immediately stopping
 
 # Looky-Turtle (Object Detection/Tracking Turtlebot)
 
@@ -16,7 +12,10 @@ This is our (Kent Miller/Sam Hamann) CSCI 5551 project for Fall 2017.  It contai
 
 ## What We Have Made
 
-TODO: Fill this out once our robut is up and turtling along
+- Moving the machine (with negative feedback loop on center of the target box)
+- Searching for object until found
+- Running average and dead zone ideas for noise reduction
+- Use center coordinates and area of box to determine linear and angular velocities
 
 ## Why an Object Detector/Tracker
 
@@ -44,7 +43,14 @@ Obviously, if such a useful technology were easy to concoct, it would already be
 
 #### -Environment Setup
 
+- Simple, barren environment
+- Minimal number of potential targets
+- Minimal obstacles
+- Targets should be less than 4 feet off of the ground (for robot to not lose sight, move too close)
+
 #### -Algorithm Choice
+
+- Haar Cascade used for extremely lightweight, quickly evaluating even on low-powered systems. 
 
 #### -Hardware Considerations
 
