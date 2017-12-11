@@ -1,8 +1,10 @@
 # Things to do:
-- Adjust the velocity smoothing for greater effect
+- Adjust the velocity smoothing for greater effect (limit accelerations)
 - Figure out how to connect to and use the Kinect
 - Train a more versatile classifier (occlusions, different orientations, angles, etc.)
 - Have non-target add on 0's instead of immediately stopping
+- Tracker w/ Haar
+- Try to add depth to help determine distance
 
 # Looky-Turtle (Object Detection/Tracking Turtlebot)
 
