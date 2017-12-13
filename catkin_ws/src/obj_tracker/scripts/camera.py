@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 # MIT License -- Do whatever you want with this file, the author couldn't care less
 
-# Accel. limits, use Microsoft Kinect, pad 0's instead of stopping, try to use depth,
-# remember which direction target left FOV. 
-
 import rospy
 import cv2
 import numpy as np
@@ -12,15 +9,16 @@ from geometry_msgs.msg import Twist, Vector3
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
 
-running_avg, vel, turn, acc = [(0,0,0)], 0, 0, 0.2
+running_avg, vel, turn, acc = [(0,0,0)], 0, 0, 0.05
 
 face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 bridge = CvBridge()
 cap = cv2.VideoCapture(0)
+# VideoCapture(0) for laptop camera, 1 for Kinect
 
 rospy.init_node('detector_node', anonymous=True)
 pub = rospy.Publisher('/cmd_vel_mux/input/teleop', Twist, queue_size=10)
-rate = rospy.Rate(100) #3 Hz
+rate = rospy.Rate(30) #3 Hz
 
 # determines average x-y coordinates of collection of points, and average areas
 def get_avg(info):
@@ -37,9 +35,9 @@ def get_avg(info):
 def get_turn(objC_X, scale):
     dist = objC_X - 320
     if dist > 100:
-        return (dist**2) * scale
+        return -(dist/320)**2 * scale
     elif dist < -100:
-        return -(dist**2) * scale
+        return (dist/320)**2 * scale
     else:
         return 0
     
@@ -47,31 +45,40 @@ def get_turn(objC_X, scale):
 # feedback with small area meaning large velocity and large area meaning small
 # velocity. Cutoff for deadzone. 
 def get_vel(area, scale):
-    vel = (340 * 260) / area * scale
-    if (vel < .1):
+    cam_area = 640 * 480
+    vel = cam_area * 0.05 / area * scale
+    if (area >= cam_area * 0.05):
+	return 0
+    if (vel < .03):
         return 0
+    elif (vel > 0.2):
+	return 0.2
     else:
         return vel
     
 # called whenever new data is received by subscriber in /camera/rgb/image_raw topic
 def callback(data):
     global running_avg, vel, turn, acc
+    target_vel, target_turn = 0, 0
 
-    cv_image = bridge.imgmsg_to_cv2(data, desired_encoding="passthrough")
-    gray = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)
+    # cv_image = bridge.imgmsg_to_cv2(data, desired_encoding="passthrough")
+    gray = cv2.cvtColor(data, cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(gray, 1.3, 5)
     
     # Only displays correctly if uses cv2.waitKey(1) to allow rendering
-    cv2.imshow('img', cv_image)
-    cv2.waitKey(1)
+    #cv2.imshow('img', data)
+    #cv2.waitKey(1)
 
     # If no faces are found, slow down linearly but keep moving in same desired direction
     if (faces == ()):
-        target_vel = 0
-        if (turn > 0):
-            target_turn = 1
+	if (len(running_avg) > 0):	
+        	running_avg = running_avg[1:]
         else:
-            target_turn = -1
+		target_vel = 0
+        	if (turn > 0):
+        	    target_turn = 0.35
+        	else:
+        	    target_turn = -0.35
         rospy.loginfo("None found")
         
     # If some number of faces are found, add values to running_avg
@@ -89,7 +96,8 @@ def callback(data):
             # Calculate the actual forward and turning velocities, then publish
             target_turn = get_turn(centerX, 1)
             target_vel = get_vel(area, 1)
-            rospy.loginfo("Turn: %d\t Vel: %d" %(turn, vel))
+    
+    rospy.loginfo("Turn: %f\t Vel: %f, Target_Turn: %f, Target_Vel: %f" %(turn, vel, target_turn, target_vel))
 
     # Some rudimentary acceleration limits, set at arbitrary values
     if (target_vel - vel > acc):
@@ -98,20 +106,23 @@ def callback(data):
         vel = vel - acc
     else:
         vel = target_vel
-    if (target_turn - turn > acc):
-        turn = turn + acc
-    elif (target_turn - turn < -acc):
-        turn = turn - acc
+    if (target_turn - turn > 3 * acc):
+        turn = turn + 3 * acc
+    elif (target_turn - turn < -3 * acc):
+        turn = turn - 3 * acc
     else:
         turn = target_turn
 
     pub.publish(Twist(Vector3(vel, 0, 0), Vector3(0, 0, turn)))
-            
+
+def detector():
+  while True:
+    ret, img = cap.read()
+    callback(img)
+    rate.sleep()
 
 if __name__ == '__main__':
-    # Note: Standard image size is 640x480 with x = 0-639, y= 0-479
-    sub = rospy.Subscriber('/camera/rgb/image_raw', Image, callback)
     try:
-        rospy.spin()
+        detector()
     except rospy.ROSInterruptException:
         pass
