@@ -9,7 +9,7 @@ from geometry_msgs.msg import Twist, Vector3
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
 
-running_avg, vel, turn, acc = [(0,0,0)], 0, 0, 0.05
+running_avg, vel, turn, acc, s_clockwise = [(0,0,0)], 0, 0, 0.05, False
 
 face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 bridge = CvBridge()
@@ -58,7 +58,7 @@ def get_vel(area, scale):
     
 # called whenever new data is received by subscriber in /camera/rgb/image_raw topic
 def callback(data):
-    global running_avg, vel, turn, acc
+    global running_avg, vel, turn, acc, s_clockwise
     target_vel, target_turn = 0, 0
 
     # cv_image = bridge.imgmsg_to_cv2(data, desired_encoding="passthrough")
@@ -75,16 +75,16 @@ def callback(data):
         	running_avg = running_avg[1:]
         else:
 		target_vel = 0
-        	if (turn > 0):
-        	    target_turn = 0.35
-        	else:
+        	if (s_clockwise):
         	    target_turn = -0.35
+        	else:
+        	    target_turn = 0.35
         rospy.loginfo("None found")
         
     # If some number of faces are found, add values to running_avg
     # TODO: What if multiple faces?
     else:
-        for (x,y,w,h) in faces:
+	    (x, y, w, h) = faces[0]
             # Set an upper limit on running_avg to the 5 most recent data points
             if (len(running_avg) >= 5):
                 running_avg = running_avg[1:]
@@ -112,6 +112,10 @@ def callback(data):
         turn = turn - 3 * acc
     else:
         turn = target_turn
+    if (turn > 0):
+	s_clockwise = False
+    elif (turn < 0):
+	s_clockwise = True
 
     pub.publish(Twist(Vector3(vel, 0, 0), Vector3(0, 0, turn)))
 
