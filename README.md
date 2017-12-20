@@ -1,19 +1,15 @@
-# Things to do:
-- Adjust the velocity smoothing for greater effect (limit accelerations)
-- Figure out how to connect to and use the Kinect
-- Train a more versatile classifier (occlusions, different orientations, angles, etc.)
-- Have non-target add on 0's instead of immediately stopping
-- Tracker w/ Haar
-- Try to add depth to help determine distance
-
 # Looky-Turtle (Object Detection/Tracking Turtlebot)
+
+# Installation
+Download and unzip the compressed file. If numpy and opencv python libraries are uninstalled, run 'make' from the parent directory to pip install the libraries. Then run catkin_make from your catkin workspace to register the package with ROS and catkin software. 
 
 ## Introduction
 
 This is our (Kent Miller/Sam Hamann) CSCI 5551 project for Fall 2017.  It contains code that allows a Turtlebot2 to detect and follow objects.  The objects it detects and follows depends on the model used within the project, but theoretically can be anything (or things) that can be trained to be detected using machine learning techniques.
 
 ## What We Have Made
-
+- Have non-target add on 0's instead of immediately stopping
+- Adjust the velocity smoothing for greater effect (limit accelerations)
 - Moving the machine (with negative feedback loop on center of the target box)
 - Searching for object until found
 - Running average and dead zone ideas for noise reduction
@@ -54,6 +50,9 @@ Obviously, if such a useful technology were easy to concoct, it would already be
 
 - Haar Cascade used for extremely lightweight, quickly evaluating even on low-powered systems. 
 
-#### -Hardware Considerations
+# Things to do:
+- Figure out how to connect to and use the Kinect
+- Train a more versatile classifier (occlusions, different orientations, angles, etc.)
+- Tracker w/ Haar
+- Try to add depth to help determine distance
 
-### Physical Robot Control

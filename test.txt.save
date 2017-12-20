@@ -1,7 +1,0 @@
-header:
-  seq: 3164
-  stamp:
-    secs: 305
-    nsecs: 160000000
-  frame_id: camera_depth_optical_frame height: 480 width: 640 encoding: 
-bgr8 is_bigendian: 0 step: 1920
