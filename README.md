@@ -1,7 +1,7 @@
 # Looky-Turtle (Object Detection/Tracking Turtlebot)
 
 # Installation
-Download and unzip the compressed file. If numpy and opencv python libraries are uninstalled, run 'make' from the parent directory to pip install the libraries. Then run catkin_make from your catkin workspace to register the package with ROS and catkin software. 
+Suggested method is using Git's clone functionality. If you download and unzip the compressed file, then make sure that the folder's name matches "object_tracker" exactly; otherwise, it will not build correctly with catkin_make. If numpy and opencv python libraries are uninstalled, run 'make' from the parent directory to pip install the libraries. Then run catkin_make from your catkin workspace to register the package with ROS and catkin software. 
 
 ## Introduction
 
